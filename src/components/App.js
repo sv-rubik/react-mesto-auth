@@ -1,62 +1,14 @@
-import logo from './images/logo.svg'
-import './index.css'
+import '../index.css'
+import Header from "./Header"
+import Main from "./Main"
+import Footer from "./Footer"
 
 function App() {
   return (
     <>
-      {/*  Header  */}
-      <header className="header">
-        <a className="header__link" href="#">
-          <img
-            className="header__logo"
-            src={logo}
-            alt="логотип проекта 'Место'"
-          />
-        </a>
-      </header>
-        {/*  Main  */}
-      <main className="main">
-        {/*  Section profile  */}
-        <section className="profile" aria-label="Профиль пользователя">
-          <div className="profile__avatar-zone">
-            <img
-              className="profile__avatar-image"
-              src="#"
-              alt="Аватар пользователя"
-            />
-            <button
-              className="profile__avatar-edit-btn"
-              type="button"
-              aria-label="Редактировать аватар"
-            />
-          </div>
-          <div className="profile__info">
-            <h1 className="profile__name"/>
-            <button
-              className="profile__edit-btn"
-              type="button"
-              aria-label="Редактировать профиль"
-            />
-            <p className="profile__description"/>
-          </div>
-          <button
-            className="profile__add-btn"
-            type="button"
-            aria-label="Добавить фотографию"
-          />
-        </section>
-        {/*  Section elements  */}
-        <section
-          className="elements"
-          aria-label="Галерея фотографий интересных мест в России"
-        >
-          <ul className="elements-grid"></ul>
-        </section>
-      </main>
-        {/*  Footer  */}
-      <footer className="footer">
-        <p className="footer__copyright">© 2023 Mesto Russia</p>
-      </footer>
+      <Header />
+      <Main />
+      <Footer />
         {/*  Popup Edit */}
       <div className="popup" id="popup-edit">
         <div className="popup__container">
@@ -146,7 +98,7 @@ function App() {
         {/*  Popup Image */}
       <div className="popup popup_dark-overlay" id="popup-image">
         <div className="popup__container-image">
-          <img className="popup__image" src="#" alt="#"/>
+          <img className="popup__image" src="mesto-react/src/components/App#" alt="#"/>
           <p className="popup__image-caption"/>
           <button className="popup__close-btn" type="button"/>
         </div>
@@ -202,4 +154,4 @@ function App() {
   )
 }
 
-export default App;
+export default App
