@@ -5,6 +5,7 @@
 * Для запуска проекта используйте команды: 
 
   > git clone https://github.com/sv-rubik/mesto-react.git
+
   > npm run start
 
 ## Технологии:
