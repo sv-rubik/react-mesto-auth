@@ -9,7 +9,7 @@ function PopupWithForm(props) {
         <form className="popup__form" name={props.name} id={props.formID}>
           {props.children}
           <button className="popup__create-btn popup__save-btn popup__save-btn_disabled" type="submit"
-                  aria-label={props.title}>{props.btnText}</button>
+                  aria-label={props.title}>{props.btnText || 'Сохранить'}</button>
         </form>
       </div>
     </div>
