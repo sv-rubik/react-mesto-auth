@@ -35,7 +35,7 @@ class Api {
       method: 'PATCH',
       body: JSON.stringify({
         name: profileInputsData.name,
-        about: profileInputsData.description })
+        about: profileInputsData.about })
     })
       .then(res => {return this._handleServerResponse(res)})
   }
@@ -83,7 +83,26 @@ class Api {
     })
       .then(res => {return this._handleServerResponse(res)})
   }
+
+  changeLikeCardStatus (cardId, isLiked) {
+    if (isLiked) {
+      return fetch(`${this._url}cards/${cardId}/likes`, {
+        headers: this._headers,
+        method: 'PUT',
+      })
+        .then(res => { return this._handleServerResponse(res)})
+    } else {
+      return fetch(`${this._url}cards/${cardId}/likes`, {
+        headers: this._headers,
+        method: 'DELETE',
+      })
+        .then(res => { return this._handleServerResponse(res)})
+    }
+  }
+
 }
+
+
 ////////////////////////////////////// Export class Api instance
 
 export const api = new Api({
