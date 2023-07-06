@@ -74,23 +74,29 @@ function App() {
 
   function handleUpdateUser (profileInputsData) {
     api.sendUserData({name: profileInputsData.name, about: profileInputsData.about})
-      .then((res) => {setCurrentUser(res)})
+      .then((res) => {
+        setCurrentUser(res)
+        closeAllPopups()
+      })
       .catch((err) => {console.log("There is an error while updating profile:", err) })
-      .finally(() => {closeAllPopups()})
   }
 
   function handleUpdateAvatar (avatarLink) {
     api.sendAvatarLink(avatarLink)
-      .then((res) => {setCurrentUser(res)})
+      .then((res) => {
+        setCurrentUser(res)
+        closeAllPopups()
+      })
       .catch((err) => {console.log("There is an error while updating avatar:", err) })
-      .finally(() => {closeAllPopups()})
   }
 
   function handleAddPlaceSubmit ({name, link}) {
     api.addNewCard({name: name, link: link})
-      .then((card) => {setCards([card, ...cards])})
+      .then((card) => {
+        setCards([card, ...cards])
+        closeAllPopups()
+      })
       .catch((err) => {console.log("There is an error while adding place:", err) })
-      .finally(() => {closeAllPopups()})
   }
 
   return (
