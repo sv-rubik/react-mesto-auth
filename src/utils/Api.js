@@ -35,7 +35,7 @@ class Api {
       method: 'PATCH',
       body: JSON.stringify({
         name: profileInputsData.name,
-        about: profileInputsData.description })
+        about: profileInputsData.about })
     })
       .then(res => {return this._handleServerResponse(res)})
   }
