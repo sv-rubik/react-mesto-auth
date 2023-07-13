@@ -6,6 +6,7 @@
 @import url(./blocks/header/header.css);
 @import url(./blocks/header/__link/header__link.css);
 @import url(./blocks/header/__logo/header__logo.css);
+@import url(./blocks/header/__auth/header__auth.css);
 
 @import url(./blocks/profile/profile.css);
 @import url(./blocks/profile/__add-btn/profile__add-btn.css);
@@ -53,5 +54,17 @@
 @import url(./blocks/popup/__image-caption/popup__image-caption.css);
 @import url(./blocks/popup/__error/popup__error.css);
 @import url(./blocks/popup/__error/_visible/popup__error_visible.css);
+
+@import url(./blocks/auth/auth.css);
+@import url(./blocks/auth/__title/auth__title.css);
+@import url(./blocks/auth/__label/auth__label.css);
+@import url(./blocks/auth/__input/auth__input.css);
+@import url(./blocks/auth/__save-btn/auth__save-btn.css);
+@import url(./blocks/auth/__link/auth__link.css);
+@import url(./blocks/auth/____go-to-login/auth__go-to-login.css);
+
+@import url(./blocks/auth/__tooltip/auth__tooltip.css);
+@import url(./blocks/auth/__tooltip-icon/auth__tooltip-icon.css);
+@import url(./blocks/auth/__tooltip-text/auth__tooltip-text.css);
 
 @import url(./vendor/fonts/fonts.css);

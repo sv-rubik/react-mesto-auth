@@ -1,14 +1,20 @@
-import React, {useEffect, useState} from "react"
+import React, {useEffect, useState} from 'react'
+import {Route, Routes, useNavigate} from 'react-router-dom' //TODO
 import '../index.css'
-import Header from "./Header"
-import Main from "./Main"
-import Footer from "./Footer"
-import ImagePopup from "./ImagePopup"
-import EditProfilePopup from "./EditProfilePopup"
-import EditAvatarPopup from "./EditAvatarPopup"
-import AddPlacePopup from "./AddPlacePopup"
-import {CurrentUserContext} from "../contexts/CurrentUserContext"
-import {api} from "../utils/Api"
+import Header from './Header'
+import Main from './Main'
+import Footer from './Footer'
+import ImagePopup from './ImagePopup'
+import EditProfilePopup from './EditProfilePopup'
+import EditAvatarPopup from './EditAvatarPopup'
+import AddPlacePopup from './AddPlacePopup'
+import ProtectedRoute from './ProtectedRoute'
+import Login from './Login.js'
+import Register from './Register.js'
+import InfoTooltip from './InfoTooltip'
+import {CurrentUserContext} from '../contexts/CurrentUserContext'
+import {api} from '../utils/Api'
+import {authApi} from '../utils/AuthApi'
 
 function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false)
@@ -18,6 +24,27 @@ function App() {
   const [selectedCard, setSelectedCard] = useState({})
   const [cards, setCards] = useState([])
   const [currentUser, setCurrentUser] = useState({}) // context variable
+  // PR12
+  const [isTooltipPopupOpen, setIsTooltipPopupOpen] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [email, setEmail] = useState('')
+  const [isAuthorized, setIsAuthorized] = useState(false) // for popup-Tooltip
+
+  const navigate = useNavigate()
+
+  // Existing token check to render correct path
+  useEffect(() => {
+    const existingToken = localStorage.getItem('token') // check if any tokens available in localstorage
+    if (existingToken) {
+      authApi.checkToken(existingToken) //if jwt valid get response obj with '_id' (jwt token) & 'email'
+        .then((res) => {
+          setEmail(res.data.email) //add email to header because user authorized earlier
+          setIsLoggedIn(true)      // redirect to content
+          navigate('/')
+        })
+        .catch((err) => {console.log(`There is an error in token verification, ${err}`)})
+    }
+  }, [])
 
   // to render cards and user data
   useEffect(() => {
@@ -46,6 +73,7 @@ function App() {
     setIsAddPlacePopupOpen(false)
     setIsEditAvatarPopupOpen(false)
     setIsImagePopupOpen(false)
+    setIsTooltipPopupOpen(false)
   }
 
   const handleCardClick = (card) => {
@@ -99,17 +127,57 @@ function App() {
       .catch((err) => {console.log("There is an error while adding place:", err) })
   }
 
+  //////////////////////////////////////////////
+  //PR12
+  //User registration - tooltip popup will show if authorized successfully
+  function handleRegister (password, email) {
+    console.log('handleRegister started')
+    authApi.register(password, email)
+      .then(() => {setIsTooltipPopupOpen(true); setIsAuthorized(true); console.log('handleRegister completed')})
+      .catch((err) => {console.log(`There is an error while registering, ${err}`); setIsTooltipPopupOpen(true); setIsAuthorized(false)})
+  }
+
+  //User login - tooltip popup will show if authorized successfully
+  function handleLogin (email, password) {
+    authApi.authorize(email, password)
+      .then((res) => {
+        // received res object, which contains 'token'
+        if (res.token) {
+          localStorage.setItem('token', res.token) // save token in localstorage
+          setEmail(email)
+          setIsLoggedIn(true)
+          navigate('/')
+        }
+      })
+      .catch((err) => {
+        console.log(`There is an error while logging in, ${err}`)
+        setIsTooltipPopupOpen(true)
+        setIsAuthorized(false)})
+  }
+
+  //Logout - removing token from localstorage
+  function handleLogOut(){
+    localStorage.removeItem('token')
+    setIsLoggedIn(false)
+    navigate('/login')
+  }
+
   return (
     <CurrentUserContext.Provider value={currentUser}> {/*  value to provide from App to below components */}
-      <>
-        <Header />
-        <Main cards={cards}
-              onEditProfile={handleEditProfileClick}
-              onAddPlace={handleAddPlaceClick}
-              onEditAvatar={handleEditAvatarClick}
-              onCardClick={handleCardClick}
-              onCardLike={handleCardLike}
-              onCardDelete={handleCardDelete}/>
+        <Header isLoggedIn={isLoggedIn} logOut={handleLogOut} email={email} />
+        <Routes>
+          <Route exact path="/" element={< ProtectedRoute element={Main}
+                                                          cards={cards}
+                                                          onEditProfile={handleEditProfileClick}
+                                                          onAddPlace={handleAddPlaceClick}
+                                                          onEditAvatar={handleEditAvatarClick}
+                                                          onCardClick={handleCardClick}
+                                                          onCardLike={handleCardLike}
+                                                          onCardDelete={handleCardDelete}
+                                                          isLoggedIn = {isLoggedIn}/>} />
+          <Route path="/sign-up" element={<Register onRegister={handleRegister} />} ></Route>
+          <Route path="/sign-in" element={<Login onLogin={handleLogin} />} ></Route>
+        </Routes>
         <Footer />
 
         {/*  Popup Edit */}
@@ -134,7 +202,9 @@ function App() {
 
           {/* Popup Avatar */}
         <EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups} onUpdateAvatar={handleUpdateAvatar}/>
-      </>
+
+          {/* Tooltip Popup */}
+        <InfoTooltip isOpen={isTooltipPopupOpen} onClose={closeAllPopups} isAuthorized={isAuthorized} />
     </CurrentUserContext.Provider>
   )
 }
