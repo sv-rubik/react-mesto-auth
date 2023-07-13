@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import {Route, Routes, useNavigate} from 'react-router-dom' //TODO
+import {Navigate, Route, Routes, useNavigate} from 'react-router-dom'
 import '../index.css'
 import Header from './Header'
 import Main from './Main'
@@ -13,8 +13,8 @@ import Login from './Login.js'
 import Register from './Register.js'
 import InfoTooltip from './InfoTooltip'
 import {CurrentUserContext} from '../contexts/CurrentUserContext'
-import {api} from '../utils/Api'
-import {authApi} from '../utils/AuthApi'
+import {api} from '../utils/api'
+import {authApi} from '../utils/authApi'
 
 function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false)
@@ -44,7 +44,7 @@ function App() {
         })
         .catch((err) => {console.log(`There is an error in token verification, ${err}`)})
     }
-  }, [])
+  }, [isLoggedIn, navigate])
 
   // to render cards and user data
   useEffect(() => {
@@ -54,7 +54,7 @@ function App() {
         setCards(cards)
       })
       .catch(err => console.log("There is an error:", err))
-  }, [])
+  }, [isLoggedIn])
 
   const handleEditProfileClick = () => {
     setIsEditProfilePopupOpen(true)
@@ -127,14 +127,44 @@ function App() {
       .catch((err) => {console.log("There is an error while adding place:", err) })
   }
 
+  // Closing by ESC
+  const isAnyPopupOpen =
+    isEditProfilePopupOpen ||
+    isAddPlacePopupOpen ||
+    isEditAvatarPopupOpen ||
+    isImagePopupOpen ||
+    isTooltipPopupOpen ||
+    selectedCard
+
+  useEffect(() => {
+    function handleEscClose(e) {
+      if (e.key === "Escape") {
+        closeAllPopups()
+      }
+    }
+      if (isAnyPopupOpen) {
+        document.addEventListener("keydown", handleEscClose)
+        return () => {
+          document.removeEventListener("keydown", handleEscClose)
+        }
+      }
+  }, [isAnyPopupOpen])
+
   //////////////////////////////////////////////
   //PR12
   //User registration - tooltip popup will show if authorized successfully
   function handleRegister (password, email) {
-    console.log('handleRegister started')
     authApi.register(password, email)
-      .then(() => {setIsTooltipPopupOpen(true); setIsAuthorized(true); console.log('handleRegister completed')})
-      .catch((err) => {console.log(`There is an error while registering, ${err}`); setIsTooltipPopupOpen(true); setIsAuthorized(false)})
+      .then(() => {
+        setIsTooltipPopupOpen(true)
+        setIsAuthorized(true)
+        navigate('/sign-in')
+      })
+      .catch((err) => {
+        console.log(`There is an error while registering, ${err}`)
+        setIsTooltipPopupOpen(true)
+        setIsAuthorized(false)
+      })
   }
 
   //User login - tooltip popup will show if authorized successfully
@@ -166,17 +196,22 @@ function App() {
     <CurrentUserContext.Provider value={currentUser}> {/*  value to provide from App to below components */}
         <Header isLoggedIn={isLoggedIn} logOut={handleLogOut} email={email} />
         <Routes>
-          <Route exact path="/" element={< ProtectedRoute element={Main}
-                                                          cards={cards}
-                                                          onEditProfile={handleEditProfileClick}
-                                                          onAddPlace={handleAddPlaceClick}
-                                                          onEditAvatar={handleEditAvatarClick}
-                                                          onCardClick={handleCardClick}
-                                                          onCardLike={handleCardLike}
-                                                          onCardDelete={handleCardDelete}
-                                                          isLoggedIn = {isLoggedIn}/>} />
-          <Route path="/sign-up" element={<Register onRegister={handleRegister} />} ></Route>
-          <Route path="/sign-in" element={<Login onLogin={handleLogin} />} ></Route>
+          <Route exact
+                 path="/"
+                 element={
+                   <ProtectedRoute
+                     element={Main}
+                     cards={cards}
+                     onEditProfile={handleEditProfileClick}
+                     onAddPlace={handleAddPlaceClick}
+                     onEditAvatar={handleEditAvatarClick}
+                     onCardClick={handleCardClick}
+                     onCardLike={handleCardLike}
+                     onCardDelete={handleCardDelete}
+                     isLoggedIn = {isLoggedIn}/>} />
+          <Route path="/sign-up" element={<Register onRegister={handleRegister} />} />
+          <Route path="/sign-in" element={<Login onLogin={handleLogin} />} />
+          <Route path="*" element={<Navigate to="/sign-in" replace />} />
         </Routes>
         <Footer />
 

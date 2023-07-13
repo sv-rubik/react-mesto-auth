@@ -23,7 +23,7 @@ class AuthApi {
       body: JSON.stringify({password, email})
     })
       //we get res objet, which contains '_id' (jwt token) & 'email'
-      .then(res => {console.log(res); return this._handleServerResponse(res)})
+      .then(res => {return this._handleServerResponse(res)})
   }
 
   // Check if user's email & password exists on server.

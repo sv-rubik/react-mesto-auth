@@ -6,12 +6,13 @@ function Header ({isLoggedIn, logOut, email}) {
   const location = useLocation()
   const path = (location.pathname === "/sign-in") ? "/sign-up" : "/sign-in"
   const headerLink = (location.pathname === "/sign-in") ? "Регистрация" : "Войти"
+  const rootPath = '/'
 
   return (
     <header className="header">
-      <a className="header__link" href="mesto-react-auth/src/components/App#">
+      <Link className="header__link" to={rootPath}>
         <img className="header__logo" src={logo} alt="логотип проекта 'Место'"/>
-      </a>
+      </Link>
 
       <div className="header__auth">
         {/*if authorized, render below*/}
