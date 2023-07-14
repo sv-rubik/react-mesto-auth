@@ -32,7 +32,7 @@ function App() {
 
   const navigate = useNavigate()
 
-  // Existing token check to render correct path
+  // Existing token check to render correct path for earlier authorized user
   useEffect(() => {
     const existingToken = localStorage.getItem('token') // check if any tokens available in localstorage
     if (existingToken) {
@@ -46,7 +46,7 @@ function App() {
     }
   }, [isLoggedIn, navigate])
 
-  // to render cards and user data
+  // To render initial cards and user data from server
   useEffect(() => {
     if (isLoggedIn) {
       Promise.all([api.getUserData(), api.getInitialCards()])
@@ -129,7 +129,7 @@ function App() {
       .catch((err) => {console.log("There is an error while adding place:", err) })
   }
 
-  // Closing by ESC
+  ///////////// Closing by ESC and on overlay click
   const isAnyPopupOpen =
     isEditProfilePopupOpen ||
     isAddPlacePopupOpen ||
@@ -149,6 +149,20 @@ function App() {
           document.removeEventListener("keydown", handleEscClose)
         }
       }
+  }, [isAnyPopupOpen])
+
+  useEffect(() => {
+    function handleOverlayClose(e) {
+      if (e.target.classList.contains('popup_opened') || e.target.classList.contains('popup__close-btn')) {
+        closeAllPopups()
+      }
+    }
+    if (isAnyPopupOpen) {
+      document.addEventListener('mousedown', handleOverlayClose)
+      return () => {
+        document.removeEventListener("mousedown", handleOverlayClose)
+      }
+    }
   }, [isAnyPopupOpen])
 
   //////////////////////////////////////////////
