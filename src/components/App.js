@@ -48,12 +48,14 @@ function App() {
 
   // to render cards and user data
   useEffect(() => {
-    Promise.all([api.getUserData(), api.getInitialCards()])
-      .then(([userData, cards]) => {
-        setCurrentUser(userData)
-        setCards(cards)
-      })
-      .catch(err => console.log("There is an error:", err))
+    if (isLoggedIn) {
+      Promise.all([api.getUserData(), api.getInitialCards()])
+        .then(([userData, cards]) => {
+          setCurrentUser(userData)
+          setCards(cards)
+        })
+        .catch(err => console.log("There is an error:", err))
+    }
   }, [isLoggedIn])
 
   const handleEditProfileClick = () => {
@@ -133,8 +135,7 @@ function App() {
     isAddPlacePopupOpen ||
     isEditAvatarPopupOpen ||
     isImagePopupOpen ||
-    isTooltipPopupOpen ||
-    selectedCard
+    isTooltipPopupOpen
 
   useEffect(() => {
     function handleEscClose(e) {
