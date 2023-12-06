@@ -23,3 +23,8 @@
 
 #### Ссылка на проект
 * [Сервис "Mesto" на GitHub Pages](https://sv-rubik.github.io/mesto-react-auth/)
+
+#### Инструкция по установке:
+1. Клонировать репозиторий git clone https://github.com/sv-rubik/react-mesto-auth.git
+2. Установить зависимости npm i
+3. Запустить локально так: npm start
